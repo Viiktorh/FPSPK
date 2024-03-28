@@ -70,6 +70,16 @@ public:
 
 	UCameraComponent* GetFPVCameraComponent() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Health = 10.f;
+
+    virtual float TakeDamage
+    (
+        float DamageAmount,
+        struct FDamageEvent const& DamageEvent,
+        class AController* EventInstigator,
+        AActor* DamageCauser
+    ) override;
 
 protected:
 	virtual void BeginPlay() override;
