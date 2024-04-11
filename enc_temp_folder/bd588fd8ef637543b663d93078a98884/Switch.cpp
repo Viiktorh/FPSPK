@@ -30,7 +30,7 @@ void ASwitch::Tick(float DeltaTime)
 void ASwitch::Interact_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("INTERACTED!!!"));
-	FVector MoveCube = FVector(0, 100, 0);
+	FVector MoveCube = FVector(0, 0, 100);
 	SetActorLocation(GetActorLocation() + MoveCube);
 
 	// Adding something similar to the unreal "FlipFlop"
@@ -42,6 +42,6 @@ void ASwitch::Interact_Implementation()
 	}
 	else if (!bIsFlipFlopActivated)
 	{
-		MeshComponent->SetMaterial(0, Material2);
+		MeshComponent->SetMaterial(0, Material1);
 	}
 }
