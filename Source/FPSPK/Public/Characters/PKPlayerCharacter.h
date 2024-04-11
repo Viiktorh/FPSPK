@@ -49,10 +49,22 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	UInputAction* LookAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputAction* Interact;
 
 	void Move(const FInputActionValue& Value);
 
 	void LookAround(const FInputActionValue& Value);
+
+	/*
+	 * Interact
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Interact")
+	void InteractWithObject();
+
+	UPROPERTY(EditAnywhere, Category = "Interact")
+	float InteractRange = 500.f;
 
 	/*
 	 * Weapon
