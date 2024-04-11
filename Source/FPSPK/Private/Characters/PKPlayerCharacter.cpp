@@ -1,6 +1,7 @@
 #include "Characters/PKPlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "FPSPKInteractInterface.h"
 #include "InputAction.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -46,6 +47,26 @@ void APKPlayerCharacter::LookAround(const FInputActionValue& Value)
 		AddControllerYawInput(LookAroundVector.X);
 		AddControllerPitchInput(LookAroundVector.Y);
 	}
+}
+
+void APKPlayerCharacter::InteractWithObjects(const FInputActionValue& Value)
+{
+	FVector StartTrace = GetFPVCameraComponent()->GetComponentLocation();
+	FVector EndTrace = StartTrace + GetFPVCameraComponent()->GetComponentRotation().Vector() * InteractRange;
+
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility, CollisionParams))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *HitResult.GetActor()->GetName());
+		if (HitResult.GetActor()->Implements<UFPSPKInteractInterface>())
+		{
+			IFPSPKInteractInterface::Execute_Interact(HitResult.GetActor());
+		}
+	}
+	DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor::Green, false, 3.f, 0, 2.f);
 }
 
 void APKPlayerCharacter::SetHasWeapon(bool bHasNewWeapon)
@@ -110,5 +131,7 @@ void APKPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &APKPlayerCharacter::InteractWithObjects);
 	}
 }
